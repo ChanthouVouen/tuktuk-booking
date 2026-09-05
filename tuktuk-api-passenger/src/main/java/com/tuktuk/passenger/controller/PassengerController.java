@@ -1,0 +1,57 @@
+package com.tuktuk.passenger.controller;
+
+import com.tuktuk.core.passenger.PassengerService;
+import com.tuktuk.core.passenger.dto.PassengerResponse;
+import com.tuktuk.core.passenger.dto.PassengerUpdateRequest;
+import com.tuktuk.domain.passenger.Passenger;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/passengers")
+@RequiredArgsConstructor
+@Tag(name = "Passengers")
+@SecurityRequirement(name = "bearerAuth")
+public class PassengerController {
+
+    private final PassengerService passengerService;
+
+    @GetMapping
+    public ResponseEntity<List<PassengerResponse>> findAll() {
+        return ResponseEntity.ok(passengerService.findAll());
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<PassengerResponse> findCurrent(@AuthenticationPrincipal Passenger passenger) {
+        return ResponseEntity.ok(passengerService.findById(passenger.getId()));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PassengerResponse> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(passengerService.findById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PassengerResponse> update(@PathVariable Long id, @Valid @RequestBody PassengerUpdateRequest request) {
+        return ResponseEntity.ok(passengerService.update(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        passengerService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+}

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Spring Boot Parent for version alignment -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.3</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>com.tuktuk</groupId>
+    <artifactId>tuktuk-booking</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>tuktuk-booking</name>
+    <description>TukTuk Booking Multi-Module Spring Boot Application</description>
+
+    <!-- Child Modules -->
+    <modules>
+        <module>tuktuk-common</module>
+        <module>tuktuk-domain</module>
+        <module>tuktuk-core</module>
+        <module>tuktuk-api-passenger</module>
+        <module>tuktuk-api-driver</module>
+    </modules>
+
+    <properties>
+        <java.version>17</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <tuktuk.version>1.0.0-SNAPSHOT</tuktuk.version>
+        <!-- Spring Boot 3.2.3 manages Lombok 1.18.30, which predates JDK 21+ javac
+             internals and fails to compile on newer JDKs; pin a version with JDK 25 support. -->
+        <lombok.version>1.18.48</lombok.version>
+        <!-- Pinned to a release built against Spring Framework 6.1.x (Spring Boot 3.2.x);
+             newer springdoc 2.7+/2.8+ releases require Spring Framework 6.2 (Spring Boot 3.4+). -->
+        <springdoc-openapi.version>2.3.0</springdoc-openapi.version>
+        <jjwt.version>0.12.6</jjwt.version>
+    </properties>
+
+    <!-- Centralized version management for internal submodules -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.tuktuk</groupId>
+                <artifactId>tuktuk-common</artifactId>
+                <version>${tuktuk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tuktuk</groupId>
+                <artifactId>tuktuk-domain</artifactId>
+                <version>${tuktuk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tuktuk</groupId>
+                <artifactId>tuktuk-core</artifactId>
+                <version>${tuktuk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc-openapi.version}</version>
+            </dependency>
+            <!-- JWT (used by tuktuk-common's JwtService) -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- Dependencies inherited by ALL submodules -->
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
