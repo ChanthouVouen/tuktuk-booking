@@ -1,10 +1,14 @@
 package com.tuktuk.domain.passenger;
 
+import com.tuktuk.domain.booking.Booking;
 import com.tuktuk.domain.common.BaseEntity;
 import com.tuktuk.domain.common.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -38,6 +42,10 @@ public class Passenger extends BaseEntity implements UserDetails {
 
     @Column(nullable = false, length = 20)
     private String phoneNumber;
+
+    @OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Booking> bookings = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

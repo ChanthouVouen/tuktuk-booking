@@ -1,10 +1,16 @@
 package com.tuktuk.domain.driver;
 
+import com.tuktuk.domain.booking.Booking;
 import com.tuktuk.domain.common.BaseEntity;
 import com.tuktuk.domain.common.Role;
+import com.tuktuk.domain.vehicle.Vehicle;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -44,6 +50,13 @@ public class Driver extends BaseEntity implements UserDetails {
 
     @Column(nullable = false, unique = true, length = 20)
     private String vehiclePlate;
+
+    @OneToMany(mappedBy = "driver", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Booking> bookings = new ArrayList<>();
+
+    @OneToOne(mappedBy = "driver", fetch = FetchType.LAZY)
+    private Vehicle vehicle;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
