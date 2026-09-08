@@ -11,6 +11,7 @@ import com.tuktuk.domain.booking.BookingRepository;
 import com.tuktuk.domain.booking.BookingStatus;
 import com.tuktuk.domain.driver.Driver;
 import com.tuktuk.domain.driver.DriverRepository;
+import com.tuktuk.domain.notification.NotificationRepository;
 import com.tuktuk.domain.passenger.Passenger;
 import com.tuktuk.domain.passenger.PassengerRepository;
 import com.tuktuk.domain.vehicletype.VehicleType;
@@ -39,6 +40,9 @@ class BookingServiceTest {
     private VehicleTypeRepository vehicleTypeRepository;
 
     @Mock
+    private NotificationRepository notificationRepository;
+
+    @Mock
     private Passenger passenger;
 
     @Mock
@@ -50,7 +54,8 @@ class BookingServiceTest {
 
     @BeforeEach
     void setUp() {
-        bookingService = new BookingService(bookingRepository, driverRepository, passengerRepository, vehicleTypeRepository);
+        bookingService = new BookingService(
+            bookingRepository, driverRepository, passengerRepository, vehicleTypeRepository, notificationRepository);
         driver = Driver.builder().build();
         driver.setId(7L);
         booking = Booking.builder()

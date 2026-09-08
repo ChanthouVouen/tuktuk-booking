@@ -8,6 +8,8 @@ import com.tuktuk.domain.booking.Booking;
 import com.tuktuk.domain.booking.BookingRepository;
 import com.tuktuk.domain.booking.BookingStatus;
 import com.tuktuk.domain.driver.Driver;
+import com.tuktuk.domain.notification.Notification;
+import com.tuktuk.domain.notification.NotificationRepository;
 import com.tuktuk.domain.driver.DriverRepository;
 import com.tuktuk.domain.passenger.Passenger;
 import com.tuktuk.domain.passenger.PassengerRepository;
@@ -15,6 +17,7 @@ import com.tuktuk.domain.vehicletype.VehicleType;
 import com.tuktuk.domain.vehicletype.VehicleTypeRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +29,17 @@ public class BookingService {
     private static final double EARTH_RADIUS_KM = 6371.0;
 
     private final BookingRepository bookingRepository;
-        private final DriverRepository driverRepository;
+    private final DriverRepository driverRepository;
     private final PassengerRepository passengerRepository;
     private final VehicleTypeRepository vehicleTypeRepository;
+        private final NotificationRepository notificationRepository;
+
+        @Transactional(readOnly = true)
+        public List<BookingResponse> findAll() {
+                return bookingRepository.findAll().stream()
+                                .map(BookingMapper::toResponse)
+                                .toList();
+        }
 
     @Transactional
     public BookingResponse create(Long passengerId, BookingCreateRequest request) {
@@ -71,6 +82,27 @@ public class BookingService {
         booking.setStatus(BookingStatus.ACCEPTED);
         return BookingMapper.toResponse(bookingRepository.save(booking));
     }
+
+        @Transactional
+        public BookingResponse complete(Long driverId, Long bookingId) {
+                Booking booking = bookingRepository.findByIdForUpdate(bookingId)
+                                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + bookingId));
+
+                if (booking.getDriver() == null || !booking.getDriver().getId().equals(driverId)) {
+                        throw new InvalidStateException("Only the assigned driver can complete this booking");
+                }
+                if (booking.getStatus() != BookingStatus.ACCEPTED && booking.getStatus() != BookingStatus.ONGOING) {
+                        throw new InvalidStateException("Only accepted or ongoing bookings can be completed");
+                }
+
+                booking.setStatus(BookingStatus.COMPLETED);
+                Booking completedBooking = bookingRepository.save(booking);
+                notificationRepository.save(Notification.builder()
+                        .passenger(booking.getPassenger())
+                        .message("Your ride is complete. Please rate your driver for booking " + bookingId)
+                        .build());
+                return BookingMapper.toResponse(completedBooking);
+        }
 
     private BigDecimal calculateDistanceKm(BookingCreateRequest request) {
         double distanceKm = haversineDistanceKm(
