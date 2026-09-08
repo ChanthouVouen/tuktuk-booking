@@ -4,6 +4,8 @@ import com.tuktuk.common.dto.AuthRequest;
 import com.tuktuk.common.dto.AuthResponse;
 import com.tuktuk.common.dto.PassengerRegisterRequest;
 import com.tuktuk.core.service.PassengerAuthService;
+
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +25,13 @@ public class PassengerAuthController {
     private final PassengerAuthService passengerAuthService;
 
     @PostMapping("/register")
+    @Operation(summary = "Register a new passenger")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody PassengerRegisterRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(passengerAuthService.register(request));
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Login a registered passenger")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
         return ResponseEntity.ok(passengerAuthService.login(request));
     }

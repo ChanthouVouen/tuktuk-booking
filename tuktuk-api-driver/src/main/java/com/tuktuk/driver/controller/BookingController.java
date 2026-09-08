@@ -3,6 +3,8 @@ package com.tuktuk.driver.controller;
 import com.tuktuk.common.dto.BookingResponse;
 import com.tuktuk.core.service.BookingService;
 import com.tuktuk.domain.entity.Driver;
+
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -27,12 +29,14 @@ public class BookingController {
 
     @GetMapping
     @PreAuthorize("hasRole('DRIVER')")
+    @Operation(summary = "Get all bookings for the current driver")
     public ResponseEntity<List<BookingResponse>> findAll() {
         return ResponseEntity.ok(bookingService.findAll());
     }
 
     @PostMapping("/{bookingId}/accept")
     @PreAuthorize("hasRole('DRIVER')")
+    @Operation(summary = "Accept a booking")
     public ResponseEntity<BookingResponse> accept(@AuthenticationPrincipal Driver driver,
                                                    @PathVariable Long bookingId) {
         return ResponseEntity.ok(bookingService.accept(driver.getId(), bookingId));
@@ -40,6 +44,7 @@ public class BookingController {
 
     @PostMapping("/{bookingId}/complete")
     @PreAuthorize("hasRole('DRIVER')")
+    @Operation(summary = "Complete a booking")
     public ResponseEntity<BookingResponse> complete(@AuthenticationPrincipal Driver driver,
                                                      @PathVariable Long bookingId) {
         return ResponseEntity.ok(bookingService.complete(driver.getId(), bookingId));

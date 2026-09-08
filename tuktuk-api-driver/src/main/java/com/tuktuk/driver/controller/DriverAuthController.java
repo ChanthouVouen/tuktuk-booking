@@ -4,6 +4,8 @@ import com.tuktuk.common.dto.AuthRequest;
 import com.tuktuk.common.dto.AuthResponse;
 import com.tuktuk.common.dto.DriverRegisterRequest;
 import com.tuktuk.core.service.DriverAuthService;
+
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +25,13 @@ public class DriverAuthController {
     private final DriverAuthService driverAuthService;
 
     @PostMapping("/register")
+    @Operation(summary = "Register a new driver")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody DriverRegisterRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(driverAuthService.register(request));
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Login a registered driver")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
         return ResponseEntity.ok(driverAuthService.login(request));
     }

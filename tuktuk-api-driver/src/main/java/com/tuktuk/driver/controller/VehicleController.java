@@ -4,6 +4,8 @@ import com.tuktuk.common.dto.VehicleCreateRequest;
 import com.tuktuk.common.dto.VehicleResponse;
 import com.tuktuk.core.service.VehicleService;
 import com.tuktuk.domain.entity.Driver;
+
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -28,6 +30,7 @@ public class VehicleController {
 
     @PostMapping
     @PreAuthorize("hasRole('DRIVER')")
+    @Operation(summary = "Create a new vehicle for the current driver")
     public ResponseEntity<VehicleResponse> create(@AuthenticationPrincipal Driver driver,
                                                    @Valid @RequestBody VehicleCreateRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(vehicleService.create(driver, request));

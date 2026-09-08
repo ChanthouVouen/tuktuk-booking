@@ -2,6 +2,8 @@ package com.tuktuk.passenger.controller;
 
 import com.tuktuk.domain.entity.VehicleType;
 import com.tuktuk.domain.repository.VehicleTypeRepository;
+
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class VehicleTypeController {
     private final VehicleTypeRepository vehicleTypeRepository;
 
     @GetMapping
+    @Operation(summary = "Get all vehicle types")
     public ResponseEntity<List<VehicleType>> findAll() {
         return ResponseEntity.ok(vehicleTypeRepository.findAll());
     }

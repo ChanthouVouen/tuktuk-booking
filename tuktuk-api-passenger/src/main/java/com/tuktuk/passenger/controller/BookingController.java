@@ -35,6 +35,7 @@ public class BookingController {
     private final RatingService ratingService;
 
     @PostMapping
+    @Operation (summary = "Create a new booking for the current passenger")
     public ResponseEntity<BookingResponse> create(@AuthenticationPrincipal Passenger passenger,
                                                    @Valid @RequestBody BookingCreateRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookingService.create(passenger.getId(), request));
@@ -59,6 +60,7 @@ public class BookingController {
     }
 
     @PostMapping("/{bookingId}/rating")
+    @Operation(summary = "Rate the driver for a completed booking")
     public ResponseEntity<RatingResponse> rateDriver(@AuthenticationPrincipal Passenger passenger,
                                                       @PathVariable Long bookingId,
                                                       @Valid @RequestBody RatingCreateRequest request) {

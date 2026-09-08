@@ -4,6 +4,8 @@ import com.tuktuk.common.dto.DriverResponse;
 import com.tuktuk.common.dto.DriverUpdateRequest;
 import com.tuktuk.core.service.DriverService;
 import com.tuktuk.domain.entity.Driver;
+
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -29,26 +31,31 @@ public class DriverController {
     private final DriverService driverService;
 
     @GetMapping
+    @Operation(summary = "Get all drivers")
     public ResponseEntity<List<DriverResponse>> findAll() {
         return ResponseEntity.ok(driverService.findAll());
     }
 
     @GetMapping("/me")
+    @Operation(summary = "Get the current driver's information")
     public ResponseEntity<DriverResponse> findCurrent(@AuthenticationPrincipal Driver driver) {
         return ResponseEntity.ok(driverService.findById(driver.getId()));
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get a driver by ID")
     public ResponseEntity<DriverResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(driverService.findById(id));
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a driver's information")
     public ResponseEntity<DriverResponse> update(@PathVariable Long id, @Valid @RequestBody DriverUpdateRequest request) {
         return ResponseEntity.ok(driverService.update(id, request));
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a driver")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         driverService.delete(id);
         return ResponseEntity.noContent().build();

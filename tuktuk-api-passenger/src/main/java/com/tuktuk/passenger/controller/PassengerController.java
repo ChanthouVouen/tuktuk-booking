@@ -4,6 +4,8 @@ import com.tuktuk.common.dto.PassengerResponse;
 import com.tuktuk.common.dto.PassengerUpdateRequest;
 import com.tuktuk.core.service.PassengerService;
 import com.tuktuk.domain.entity.Passenger;
+
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -29,26 +31,31 @@ public class PassengerController {
     private final PassengerService passengerService;
 
     @GetMapping
+    @Operation(summary = "Get all passengers")
     public ResponseEntity<List<PassengerResponse>> findAll() {
         return ResponseEntity.ok(passengerService.findAll());
     }
 
     @GetMapping("/me")
+    @Operation(summary = "Get the current authenticated passenger's profile")
     public ResponseEntity<PassengerResponse> findCurrent(@AuthenticationPrincipal Passenger passenger) {
         return ResponseEntity.ok(passengerService.findById(passenger.getId()));
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get a passenger by id")
     public ResponseEntity<PassengerResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(passengerService.findById(id));
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a passenger's profile")
     public ResponseEntity<PassengerResponse> update(@PathVariable Long id, @Valid @RequestBody PassengerUpdateRequest request) {
         return ResponseEntity.ok(passengerService.update(id, request));
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a passenger by id")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         passengerService.delete(id);
         return ResponseEntity.noContent().build();

@@ -3,6 +3,8 @@ package com.tuktuk.driver.controller;
 import com.tuktuk.common.dto.NotificationResponse;
 import com.tuktuk.core.service.NotificationService;
 import com.tuktuk.domain.entity.Driver;
+
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -25,6 +27,7 @@ public class NotificationController {
 
     @GetMapping
     @PreAuthorize("hasRole('DRIVER')")
+    @Operation(summary = "Get notifications for the current driver")
     public ResponseEntity<List<NotificationResponse>> findMine(@AuthenticationPrincipal Driver driver) {
         return ResponseEntity.ok(notificationService.findForDriver(driver.getId()));
     }
