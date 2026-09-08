@@ -67,42 +67,37 @@ public class BookingService {
         return BookingMapper.toResponse(bookingRepository.save(booking));
     }
 
-    @Transactional
-    public BookingResponse accept(Long driverId, Long bookingId) {
-        Driver driver = driverRepository.findById(driverId)
-                .orElseThrow(() -> new ResourceNotFoundException("Driver not found with id: " + driverId));
-        Booking booking = bookingRepository.findByIdForUpdate(bookingId)
-                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + bookingId));
+    //find all
+    @Transactional(readOnly = true)
+    public List<BookingResponse> findAll(Long passengerId) {
+        return bookingRepository.findAllByPassengerId(passengerId)
+                .stream()
+                .map(BookingMapper::toResponse)
+                .toList();
+    }
 
-        if (booking.getStatus() != BookingStatus.PENDING) {
-            throw new InvalidStateException("Booking can only be accepted while it is pending");
+    //find by id
+    @Transactional(readOnly = true)
+    public BookingResponse findById(Long id, Long passengerId) {
+        Booking booking = bookingRepository.findByIdAndPassengerId(id, passengerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + id));
+        return BookingMapper.toResponse(booking);
+    }
+
+    //cancel booking
+    @Transactional
+    public BookingResponse cancel(Long id, Long passengerId) {
+        Booking booking = bookingRepository.findByIdAndPassengerId(id, passengerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + id));
+
+        if (booking.getStatus() == BookingStatus.CANCELLED || booking.getStatus() == BookingStatus.COMPLETED) {
+            throw new IllegalStateException("Booking cannot be cancelled in its current status: " + booking.getStatus());
         }
 
-        booking.setDriver(driver);
-        booking.setStatus(BookingStatus.ACCEPTED);
+        booking.setStatus(BookingStatus.CANCELLED);
         return BookingMapper.toResponse(bookingRepository.save(booking));
     }
 
-        @Transactional
-        public BookingResponse complete(Long driverId, Long bookingId) {
-                Booking booking = bookingRepository.findByIdForUpdate(bookingId)
-                                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + bookingId));
-
-                if (booking.getDriver() == null || !booking.getDriver().getId().equals(driverId)) {
-                        throw new InvalidStateException("Only the assigned driver can complete this booking");
-                }
-                if (booking.getStatus() != BookingStatus.ACCEPTED && booking.getStatus() != BookingStatus.ONGOING) {
-                        throw new InvalidStateException("Only accepted or ongoing bookings can be completed");
-                }
-
-                booking.setStatus(BookingStatus.COMPLETED);
-                Booking completedBooking = bookingRepository.save(booking);
-                notificationRepository.save(Notification.builder()
-                        .passenger(booking.getPassenger())
-                        .message("Your ride is complete. Please rate your driver for booking " + bookingId)
-                        .build());
-                return BookingMapper.toResponse(completedBooking);
-        }
 
     private BigDecimal calculateDistanceKm(BookingCreateRequest request) {
         double distanceKm = haversineDistanceKm(
