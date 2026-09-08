@@ -12,6 +12,8 @@ import com.tuktuk.domain.vehicletype.VehicleType;
 import com.tuktuk.domain.vehicletype.VehicleTypeRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +53,38 @@ public class BookingService {
 
         return BookingMapper.toResponse(bookingRepository.save(booking));
     }
+
+    //find all
+    @Transactional(readOnly = true)
+    public List<BookingResponse> findAll(Long passengerId) {
+        return bookingRepository.findAllByPassengerId(passengerId)
+                .stream()
+                .map(BookingMapper::toResponse)
+                .toList();
+    }
+
+    //find by id
+    @Transactional(readOnly = true)
+    public BookingResponse findById(Long id, Long passengerId) {
+        Booking booking = bookingRepository.findByIdAndPassengerId(id, passengerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + id));
+        return BookingMapper.toResponse(booking);
+    }
+
+    //cancel booking
+    @Transactional
+    public BookingResponse cancel(Long id, Long passengerId) {
+        Booking booking = bookingRepository.findByIdAndPassengerId(id, passengerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + id));
+
+        if (booking.getStatus() == BookingStatus.CANCELLED || booking.getStatus() == BookingStatus.COMPLETED) {
+            throw new IllegalStateException("Booking cannot be cancelled in its current status: " + booking.getStatus());
+        }
+
+        booking.setStatus(BookingStatus.CANCELLED);
+        return BookingMapper.toResponse(bookingRepository.save(booking));
+    }
+
 
     private BigDecimal calculateDistanceKm(BookingCreateRequest request) {
         double distanceKm = haversineDistanceKm(
