@@ -1,9 +1,9 @@
 package com.tuktuk.passenger.controller;
 
-import com.tuktuk.core.passenger.PassengerService;
-import com.tuktuk.core.passenger.dto.PassengerResponse;
-import com.tuktuk.core.passenger.dto.PassengerUpdateRequest;
-import com.tuktuk.domain.passenger.Passenger;
+import com.tuktuk.common.dto.PassengerResponse;
+import com.tuktuk.common.dto.PassengerUpdateRequest;
+import com.tuktuk.core.service.PassengerService;
+import com.tuktuk.domain.entity.Passenger;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

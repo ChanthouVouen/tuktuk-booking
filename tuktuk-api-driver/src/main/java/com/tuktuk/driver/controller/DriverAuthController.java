@@ -2,8 +2,8 @@ package com.tuktuk.driver.controller;
 
 import com.tuktuk.common.dto.AuthRequest;
 import com.tuktuk.common.dto.AuthResponse;
-import com.tuktuk.core.driver.DriverAuthService;
-import com.tuktuk.core.driver.dto.DriverRegisterRequest;
+import com.tuktuk.common.dto.DriverRegisterRequest;
+import com.tuktuk.core.service.DriverAuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

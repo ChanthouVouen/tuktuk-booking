@@ -10,7 +10,7 @@ Multi-module Spring Boot application for a tuk-tuk ride booking platform.
 | `tuktuk-domain` | `com.tuktuk.domain` | JPA entities and Spring Data repositories |
 | `tuktuk-core` | `com.tuktuk.core` | Business logic and service implementations |
 | `tuktuk-api-passenger` | `com.tuktuk.passenger` | Passenger-facing REST API (runnable Spring Boot app) |
-| `tuktuk-api-driver` | `com.tuktuk.driver` | Driver-facing REST/WebSocket API (runnable Spring Boot app) |
+| `tuktuk-api-driver` | `com.tuktuk.driver` | Driver-facing REST API (runnable Spring Boot app) |
 
 `tuktuk-common` -> `tuktuk-domain` -> `tuktuk-core` -> {`tuktuk-api-passenger`, `tuktuk-api-driver`}
 

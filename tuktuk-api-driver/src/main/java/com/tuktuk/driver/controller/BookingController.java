@@ -1,8 +1,8 @@
 package com.tuktuk.driver.controller;
 
-import com.tuktuk.core.booking.BookingService;
-import com.tuktuk.core.booking.dto.BookingResponse;
-import com.tuktuk.domain.driver.Driver;
+import com.tuktuk.common.dto.BookingResponse;
+import com.tuktuk.core.service.BookingService;
+import com.tuktuk.domain.entity.Driver;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

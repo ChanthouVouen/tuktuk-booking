@@ -36,6 +36,13 @@
         <!-- Spring Boot 3.2.3 manages Lombok 1.18.30, which predates JDK 21+ javac
              internals and fails to compile on newer JDKs; pin a version with JDK 25 support. -->
         <lombok.version>1.18.48</lombok.version>
+        <!-- Spring Boot 3.2.3 manages Mockito 5.7.0 and, independently, Byte Buddy
+             1.14.12 (which wins dependency mediation even if only mockito.version
+             is bumped); neither understands class files past Java 23, so mocking
+             on JDK 25 fails with "Mockito cannot mock this class". Pin both to
+             versions with JDK 25 support. -->
+        <mockito.version>5.23.0</mockito.version>
+        <byte-buddy.version>1.18.13</byte-buddy.version>
         <!-- Pinned to a release built against Spring Framework 6.1.x (Spring Boot 3.2.x);
              newer springdoc 2.7+/2.8+ releases require Spring Framework 6.2 (Spring Boot 3.4+). -->
         <springdoc-openapi.version>2.3.0</springdoc-openapi.version>

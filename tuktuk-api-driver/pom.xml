@@ -13,7 +13,7 @@
     <artifactId>tuktuk-api-driver</artifactId>
     <packaging>jar</packaging>
     <name>tuktuk-api-driver</name>
-    <description>Driver Service REST &amp; WebSocket API</description>
+    <description>Driver Service REST API</description>
 
     <dependencies>
         <!-- Internal Core Module -->
@@ -22,14 +22,10 @@
             <artifactId>tuktuk-core</artifactId>
         </dependency>
 
-        <!-- Spring Web, WebSocket, Security & Database -->
+        <!-- Spring Web, Security & Database -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

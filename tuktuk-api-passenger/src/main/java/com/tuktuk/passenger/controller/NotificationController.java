@@ -1,8 +1,8 @@
 package com.tuktuk.passenger.controller;
 
-import com.tuktuk.core.notification.NotificationService;
-import com.tuktuk.core.notification.dto.NotificationResponse;
-import com.tuktuk.domain.passenger.Passenger;
+import com.tuktuk.common.dto.NotificationResponse;
+import com.tuktuk.core.service.NotificationService;
+import com.tuktuk.domain.entity.Passenger;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

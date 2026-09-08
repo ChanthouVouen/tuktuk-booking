@@ -1,9 +1,9 @@
 package com.tuktuk.driver.controller;
 
-import com.tuktuk.core.vehicle.VehicleService;
-import com.tuktuk.core.vehicle.dto.VehicleCreateRequest;
-import com.tuktuk.core.vehicle.dto.VehicleResponse;
-import com.tuktuk.domain.driver.Driver;
+import com.tuktuk.common.dto.VehicleCreateRequest;
+import com.tuktuk.common.dto.VehicleResponse;
+import com.tuktuk.core.service.VehicleService;
+import com.tuktuk.domain.entity.Driver;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

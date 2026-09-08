@@ -2,8 +2,8 @@ package com.tuktuk.passenger.controller;
 
 import com.tuktuk.common.dto.AuthRequest;
 import com.tuktuk.common.dto.AuthResponse;
-import com.tuktuk.core.passenger.PassengerAuthService;
-import com.tuktuk.core.passenger.dto.PassengerRegisterRequest;
+import com.tuktuk.common.dto.PassengerRegisterRequest;
+import com.tuktuk.core.service.PassengerAuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

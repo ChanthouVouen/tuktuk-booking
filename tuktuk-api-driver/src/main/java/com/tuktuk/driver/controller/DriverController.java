@@ -1,9 +1,9 @@
 package com.tuktuk.driver.controller;
 
-import com.tuktuk.core.driver.DriverService;
-import com.tuktuk.core.driver.dto.DriverResponse;
-import com.tuktuk.core.driver.dto.DriverUpdateRequest;
-import com.tuktuk.domain.driver.Driver;
+import com.tuktuk.common.dto.DriverResponse;
+import com.tuktuk.common.dto.DriverUpdateRequest;
+import com.tuktuk.core.service.DriverService;
+import com.tuktuk.domain.entity.Driver;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

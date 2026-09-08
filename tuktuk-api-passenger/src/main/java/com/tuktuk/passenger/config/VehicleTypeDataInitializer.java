@@ -1,7 +1,7 @@
 package com.tuktuk.passenger.config;
 
-import com.tuktuk.domain.vehicletype.VehicleType;
-import com.tuktuk.domain.vehicletype.VehicleTypeRepository;
+import com.tuktuk.domain.entity.VehicleType;
+import com.tuktuk.domain.repository.VehicleTypeRepository;
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;

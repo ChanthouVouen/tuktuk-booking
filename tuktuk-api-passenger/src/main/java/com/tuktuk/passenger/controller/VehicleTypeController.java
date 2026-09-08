@@ -1,7 +1,7 @@
 package com.tuktuk.passenger.controller;
 
-import com.tuktuk.domain.vehicletype.VehicleType;
-import com.tuktuk.domain.vehicletype.VehicleTypeRepository;
+import com.tuktuk.domain.entity.VehicleType;
+import com.tuktuk.domain.repository.VehicleTypeRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

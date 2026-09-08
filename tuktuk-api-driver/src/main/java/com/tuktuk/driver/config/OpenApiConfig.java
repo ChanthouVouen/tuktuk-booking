@@ -15,7 +15,7 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("TukTuk Driver API")
-                        .description("Driver-facing REST/WebSocket API for accepting and managing rides")
+                        .description("Driver-facing REST API for accepting and managing rides")
                         .version("v1"))
                 .components(new Components()
                         .addSecuritySchemes("bearerAuth", new SecurityScheme()
