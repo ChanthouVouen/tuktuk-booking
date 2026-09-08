@@ -9,12 +9,14 @@ import com.tuktuk.common.exception.InvalidStateException;
 import com.tuktuk.domain.entity.Booking;
 import com.tuktuk.domain.entity.Driver;
 import com.tuktuk.domain.entity.Passenger;
+import com.tuktuk.domain.entity.Vehicle;
 import com.tuktuk.domain.entity.VehicleType;
 import com.tuktuk.domain.enums.BookingStatus;
 import com.tuktuk.domain.repository.BookingRepository;
 import com.tuktuk.domain.repository.DriverRepository;
 import com.tuktuk.domain.repository.NotificationRepository;
 import com.tuktuk.domain.repository.PassengerRepository;
+import com.tuktuk.domain.repository.VehicleRepository;
 import com.tuktuk.domain.repository.VehicleTypeRepository;
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -40,6 +42,9 @@ class BookingServiceTest {
     private VehicleTypeRepository vehicleTypeRepository;
 
     @Mock
+    private VehicleRepository vehicleRepository;
+
+    @Mock
     private NotificationRepository notificationRepository;
 
     @Mock
@@ -55,7 +60,8 @@ class BookingServiceTest {
     @BeforeEach
     void setUp() {
         bookingService = new BookingService(
-            bookingRepository, driverRepository, passengerRepository, vehicleTypeRepository, notificationRepository);
+            bookingRepository, driverRepository, passengerRepository, vehicleTypeRepository,
+            vehicleRepository, notificationRepository);
         driver = Driver.builder().build();
         driver.setId(7L);
         booking = Booking.builder()
@@ -71,6 +77,11 @@ class BookingServiceTest {
                 .build();
         booking.setId(42L);
         when(driverRepository.findById(7L)).thenReturn(Optional.of(driver));
+        when(vehicleRepository.findByDriverId(7L)).thenReturn(Optional.of(Vehicle.builder()
+            .name("TukTuk 001")
+            .type("STANDARD")
+            .driver(driver)
+            .build()));
         when(bookingRepository.findByIdForUpdate(42L)).thenReturn(Optional.of(booking));
     }
 

@@ -9,12 +9,14 @@ import com.tuktuk.domain.entity.Booking;
 import com.tuktuk.domain.entity.Driver;
 import com.tuktuk.domain.entity.Notification;
 import com.tuktuk.domain.entity.Passenger;
+import com.tuktuk.domain.entity.Vehicle;
 import com.tuktuk.domain.entity.VehicleType;
 import com.tuktuk.domain.enums.BookingStatus;
 import com.tuktuk.domain.repository.BookingRepository;
 import com.tuktuk.domain.repository.DriverRepository;
 import com.tuktuk.domain.repository.NotificationRepository;
 import com.tuktuk.domain.repository.PassengerRepository;
+import com.tuktuk.domain.repository.VehicleRepository;
 import com.tuktuk.domain.repository.VehicleTypeRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -33,6 +35,7 @@ public class BookingService {
     private final DriverRepository driverRepository;
     private final PassengerRepository passengerRepository;
     private final VehicleTypeRepository vehicleTypeRepository;
+    private final VehicleRepository vehicleRepository;
     private final NotificationRepository notificationRepository;
 
     @Transactional(readOnly = true)
@@ -40,6 +43,20 @@ public class BookingService {
         return bookingRepository.findAll().stream()
                 .map(BookingMapper::toResponse)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookingResponse> findAll(Long passengerId) {
+        return bookingRepository.findAllByPassengerId(passengerId).stream()
+                .map(BookingMapper::toResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public BookingResponse findById(Long id, Long passengerId) {
+        Booking booking = bookingRepository.findByIdAndPassengerId(id, passengerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + id));
+        return BookingMapper.toResponse(booking);
     }
 
     @Transactional
@@ -72,11 +89,16 @@ public class BookingService {
     public BookingResponse accept(Long driverId, Long bookingId) {
         Driver driver = driverRepository.findById(driverId)
                 .orElseThrow(() -> new ResourceNotFoundException("Driver not found with id: " + driverId));
+        Vehicle vehicle = vehicleRepository.findByDriverId(driverId)
+                .orElseThrow(() -> new InvalidStateException("Driver must create a vehicle before accepting bookings"));
         Booking booking = bookingRepository.findByIdForUpdate(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + bookingId));
 
         if (booking.getStatus() != BookingStatus.PENDING) {
             throw new InvalidStateException("Booking can only be accepted while it is pending");
+        }
+        if (!vehicle.getType().equalsIgnoreCase(booking.getVehicleType().getTypeName())) {
+            throw new InvalidStateException("Driver vehicle type does not match the requested vehicle type");
         }
 
         booking.setDriver(driver);
@@ -103,6 +125,19 @@ public class BookingService {
                 .message("Your ride is complete. Please rate your driver for booking " + bookingId)
                 .build());
         return BookingMapper.toResponse(completedBooking);
+    }
+
+    @Transactional
+    public BookingResponse cancel(Long id, Long passengerId) {
+        Booking booking = bookingRepository.findByIdAndPassengerId(id, passengerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + id));
+
+        if (booking.getStatus() == BookingStatus.CANCELLED || booking.getStatus() == BookingStatus.COMPLETED) {
+            throw new InvalidStateException("Booking cannot be cancelled in its current status: " + booking.getStatus());
+        }
+
+        booking.setStatus(BookingStatus.CANCELLED);
+        return BookingMapper.toResponse(bookingRepository.save(booking));
     }
 
     private BigDecimal calculateDistanceKm(BookingCreateRequest request) {
