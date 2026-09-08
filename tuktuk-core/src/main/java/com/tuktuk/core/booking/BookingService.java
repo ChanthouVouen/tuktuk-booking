@@ -15,6 +15,8 @@ import com.tuktuk.domain.passenger.Passenger;
 import com.tuktuk.domain.passenger.PassengerRepository;
 import com.tuktuk.domain.vehicletype.VehicleType;
 import com.tuktuk.domain.vehicletype.VehicleTypeRepository;
+import com.tuktuk.domain.vehicle.Vehicle;
+import com.tuktuk.domain.vehicle.VehicleRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -32,14 +34,15 @@ public class BookingService {
     private final DriverRepository driverRepository;
     private final PassengerRepository passengerRepository;
     private final VehicleTypeRepository vehicleTypeRepository;
-        private final NotificationRepository notificationRepository;
+    private final VehicleRepository vehicleRepository;
+    private final NotificationRepository notificationRepository;
 
-        @Transactional(readOnly = true)
-        public List<BookingResponse> findAll() {
-                return bookingRepository.findAll().stream()
-                                .map(BookingMapper::toResponse)
-                                .toList();
-        }
+    @Transactional(readOnly = true)
+    public List<BookingResponse> findAll() {
+        return bookingRepository.findAll().stream()
+                .map(BookingMapper::toResponse)
+                .toList();
+    }
 
     @Transactional
     public BookingResponse create(Long passengerId, BookingCreateRequest request) {
@@ -67,6 +70,48 @@ public class BookingService {
         return BookingMapper.toResponse(bookingRepository.save(booking));
     }
 
+    @Transactional
+    public BookingResponse accept(Long driverId, Long bookingId) {
+        Driver driver = driverRepository.findById(driverId)
+                .orElseThrow(() -> new ResourceNotFoundException("Driver not found with id: " + driverId));
+        Vehicle vehicle = vehicleRepository.findByDriverId(driverId)
+            .orElseThrow(() -> new InvalidStateException("Driver must create a vehicle before accepting bookings"));
+        Booking booking = bookingRepository.findByIdForUpdate(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + bookingId));
+
+        if (booking.getStatus() != BookingStatus.PENDING) {
+            throw new InvalidStateException("Booking can only be accepted while it is pending");
+        }
+        if (!vehicle.getType().equalsIgnoreCase(booking.getVehicleType().getTypeName())) {
+            throw new InvalidStateException("Driver vehicle type does not match the requested vehicle type");
+        }
+
+        booking.setDriver(driver);
+        booking.setStatus(BookingStatus.ACCEPTED);
+        return BookingMapper.toResponse(bookingRepository.save(booking));
+    }
+
+    @Transactional
+    public BookingResponse complete(Long driverId, Long bookingId) {
+        Booking booking = bookingRepository.findByIdForUpdate(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + bookingId));
+
+        if (booking.getDriver() == null || !booking.getDriver().getId().equals(driverId)) {
+            throw new InvalidStateException("Only the assigned driver can complete this booking");
+        }
+        if (booking.getStatus() != BookingStatus.ACCEPTED && booking.getStatus() != BookingStatus.ONGOING) {
+            throw new InvalidStateException("Only accepted or ongoing bookings can be completed");
+        }
+
+        booking.setStatus(BookingStatus.COMPLETED);
+        Booking completedBooking = bookingRepository.save(booking);
+        notificationRepository.save(Notification.builder()
+                .passenger(booking.getPassenger())
+                .message("Your ride is complete. Please rate your driver for booking " + bookingId)
+                .build());
+        return BookingMapper.toResponse(completedBooking);
+    }
+
     //find all
     @Transactional(readOnly = true)
     public List<BookingResponse> findAll(Long passengerId) {
@@ -91,7 +136,7 @@ public class BookingService {
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + id));
 
         if (booking.getStatus() == BookingStatus.CANCELLED || booking.getStatus() == BookingStatus.COMPLETED) {
-            throw new IllegalStateException("Booking cannot be cancelled in its current status: " + booking.getStatus());
+            throw new InvalidStateException("Booking cannot be cancelled in its current status: " + booking.getStatus());
         }
 
         booking.setStatus(BookingStatus.CANCELLED);

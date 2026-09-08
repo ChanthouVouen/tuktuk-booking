@@ -13,6 +13,9 @@ public class BookingResponse {
     private Long id;
     private Long passengerId;
     private Long driverId;
+    private Long vehicleId;
+    private String vehicleName;
+    private String vehicleType;
     private BigDecimal pickupLat;
     private BigDecimal pickupLong;
     private BigDecimal dropLat;

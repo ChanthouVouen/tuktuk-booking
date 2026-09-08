@@ -16,6 +16,8 @@ import com.tuktuk.domain.passenger.Passenger;
 import com.tuktuk.domain.passenger.PassengerRepository;
 import com.tuktuk.domain.vehicletype.VehicleType;
 import com.tuktuk.domain.vehicletype.VehicleTypeRepository;
+import com.tuktuk.domain.vehicle.Vehicle;
+import com.tuktuk.domain.vehicle.VehicleRepository;
 import java.math.BigDecimal;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +42,9 @@ class BookingServiceTest {
     private VehicleTypeRepository vehicleTypeRepository;
 
     @Mock
+    private VehicleRepository vehicleRepository;
+
+    @Mock
     private NotificationRepository notificationRepository;
 
     @Mock
@@ -55,7 +60,8 @@ class BookingServiceTest {
     @BeforeEach
     void setUp() {
         bookingService = new BookingService(
-            bookingRepository, driverRepository, passengerRepository, vehicleTypeRepository, notificationRepository);
+            bookingRepository, driverRepository, passengerRepository, vehicleTypeRepository,
+            vehicleRepository, notificationRepository);
         driver = Driver.builder().build();
         driver.setId(7L);
         booking = Booking.builder()
@@ -71,6 +77,11 @@ class BookingServiceTest {
                 .build();
         booking.setId(42L);
         when(driverRepository.findById(7L)).thenReturn(Optional.of(driver));
+        when(vehicleRepository.findByDriverId(7L)).thenReturn(Optional.of(Vehicle.builder()
+            .name("TukTuk 001")
+            .type("STANDARD")
+            .driver(driver)
+            .build()));
         when(bookingRepository.findByIdForUpdate(42L)).thenReturn(Optional.of(booking));
     }
 

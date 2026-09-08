@@ -3,6 +3,9 @@ package com.tuktuk.passenger.controller;
 import com.tuktuk.core.booking.BookingService;
 import com.tuktuk.core.booking.dto.BookingCreateRequest;
 import com.tuktuk.core.booking.dto.BookingResponse;
+import com.tuktuk.core.rating.RatingService;
+import com.tuktuk.core.rating.dto.RatingCreateRequest;
+import com.tuktuk.core.rating.dto.RatingResponse;
 import com.tuktuk.core.passenger.dto.PassengerResponse;
 import com.tuktuk.core.passenger.dto.PassengerUpdateRequest;
 import com.tuktuk.domain.passenger.Passenger;
@@ -53,4 +56,11 @@ public class BookingController {
     @Operation(summary = "Cancel a booking")
     public ResponseEntity<BookingResponse> cancel( @AuthenticationPrincipal Passenger passenger, @PathVariable Long id) {
         return ResponseEntity.ok( bookingService.cancel(id, passenger.getId()) ); }
+
+    @PostMapping("/{bookingId}/rating")
+    public ResponseEntity<RatingResponse> rateDriver(@AuthenticationPrincipal Passenger passenger,
+                                                      @PathVariable Long bookingId,
+                                                      @Valid @RequestBody RatingCreateRequest request) {
+        return ResponseEntity.ok(ratingService.create(passenger.getId(), bookingId, request));
+    }
 }
