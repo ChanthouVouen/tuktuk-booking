@@ -16,6 +16,8 @@ public final class DriverMapper {
                 .phoneNumber(driver.getPhoneNumber())
                 .licenseNumber(driver.getLicenseNumber())
                 .vehiclePlate(driver.getVehiclePlate())
+                .bakongAccountId(driver.getBakongAccountId())
+                .merchantName(driver.getMerchantName())
                 .createdAt(driver.getCreatedAt())
                 .updatedAt(driver.getUpdatedAt())
                 .build();

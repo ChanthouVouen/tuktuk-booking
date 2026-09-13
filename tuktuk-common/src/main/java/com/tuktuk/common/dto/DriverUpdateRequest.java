@@ -25,4 +25,11 @@ public class DriverUpdateRequest {
     @Size(max = 20, message = "Vehicle plate must be at most 20 characters")
     private String vehiclePlate;
 
+    @NotBlank(message = "Bakong account id is required")
+    @Size(max = 100, message = "Bakong account id must be at most 100 characters")
+    private String bakongAccountId;
+
+    @Size(max = 100, message = "Merchant name must be at most 100 characters")
+    private String merchantName;
+
 }
