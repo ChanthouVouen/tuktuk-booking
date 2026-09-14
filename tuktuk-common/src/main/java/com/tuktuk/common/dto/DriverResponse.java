@@ -14,6 +14,8 @@ public class DriverResponse {
     private String phoneNumber;
     private String licenseNumber;
     private String vehiclePlate;
+    private String bakongAccountId;
+    private String merchantName;
     private Instant createdAt;
     private Instant updatedAt;
 

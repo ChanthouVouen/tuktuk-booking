@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.tuktuk.common.exception.InvalidStateException;
+import com.tuktuk.core.service.serviceimpl.BookingServiceImpl;
 import com.tuktuk.domain.entity.Booking;
 import com.tuktuk.domain.entity.Driver;
 import com.tuktuk.domain.entity.Passenger;
@@ -53,13 +54,13 @@ class BookingServiceTest {
     @Mock
     private VehicleType vehicleType;
 
-    private BookingService bookingService;
+    private BookingServiceImpl bookingService;
     private Driver driver;
     private Booking booking;
 
     @BeforeEach
     void setUp() {
-        bookingService = new BookingService(
+        bookingService = new BookingServiceImpl(
             bookingRepository, driverRepository, passengerRepository, vehicleTypeRepository,
             vehicleRepository, notificationRepository);
         driver = Driver.builder().build();

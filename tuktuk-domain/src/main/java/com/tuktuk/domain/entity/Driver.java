@@ -48,6 +48,18 @@ public class Driver extends BaseEntity implements UserDetails {
     @Column(nullable = false, unique = true, length = 20)
     private String vehiclePlate;
 
+    /**
+     * This driver's own Bakong account/alias id (e.g. "name@bank") — KHQR payments pay it
+     * directly. Nullable at the DB level only so existing rows don't break {@code ddl-auto=update};
+     * new registrations require it (see {@code DriverRegisterRequest}).
+     */
+    @Column(name = "bakong_account_id", length = 100)
+    private String bakongAccountId;
+
+    /** Display name shown on this driver's KHQR (e.g. a business name); falls back to {@link #fullName} if blank. */
+    @Column(name = "merchant_name", length = 100)
+    private String merchantName;
+
     @OneToMany(mappedBy = "driver", fetch = FetchType.LAZY)
     @Builder.Default
     private List<Booking> bookings = new ArrayList<>();
