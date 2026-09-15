@@ -41,8 +41,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingResponse> findAll() {
-        return bookingRepository.findAll().stream()
+    public List<BookingResponse> findAllPending() {
+        return bookingRepository.findAllByStatus(BookingStatus.PENDING).stream()
                 .map(BookingMapper::toResponse)
                 .toList();
     }
@@ -51,6 +51,14 @@ public class BookingServiceImpl implements BookingService {
     @Transactional(readOnly = true)
     public List<BookingResponse> findAll(Long passengerId) {
         return bookingRepository.findAllByPassengerId(passengerId).stream()
+                .map(BookingMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BookingResponse> findAllForDriver(Long driverId) {
+        return bookingRepository.findAllByDriverId(driverId).stream()
                 .map(BookingMapper::toResponse)
                 .toList();
     }

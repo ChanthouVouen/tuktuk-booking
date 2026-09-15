@@ -27,11 +27,18 @@ public class BookingController {
 
     private final BookingService bookingService;
 
-    @GetMapping
+    @GetMapping("/pending")
     @PreAuthorize("hasRole('DRIVER')")
-    @Operation(summary = "Get all bookings for the current driver")
-    public ResponseEntity<List<BookingResponse>> findAll() {
-        return ResponseEntity.ok(bookingService.findAll());
+    @Operation(summary = "Get pending bookings available to accept")
+    public ResponseEntity<List<BookingResponse>> findAllPending() {
+        return ResponseEntity.ok(bookingService.findAllPending());
+    }
+
+    @GetMapping("/history")
+    @PreAuthorize("hasRole('DRIVER')")
+    @Operation(summary = "Get the current driver's booking history (accepted, ongoing, completed, etc)")
+    public ResponseEntity<List<BookingResponse>> findAllForDriver(@AuthenticationPrincipal Driver driver) {
+        return ResponseEntity.ok(bookingService.findAllForDriver(driver.getId()));
     }
 
     @PostMapping("/{bookingId}/accept")

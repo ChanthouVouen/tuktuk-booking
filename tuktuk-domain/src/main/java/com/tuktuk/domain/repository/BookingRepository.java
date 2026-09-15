@@ -1,6 +1,7 @@
 package com.tuktuk.domain.repository;
 
 import com.tuktuk.domain.entity.Booking;
+import com.tuktuk.domain.enums.BookingStatus;
 import jakarta.persistence.LockModeType;
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +13,10 @@ import org.springframework.data.repository.query.Param;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findAllByPassengerId(Long passengerId);
+
+    List<Booking> findAllByDriverId(Long driverId);
+
+    List<Booking> findAllByStatus(BookingStatus status);
 
     Optional<Booking> findByIdAndPassengerId(Long id, Long passengerId);
 
