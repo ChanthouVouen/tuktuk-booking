@@ -6,9 +6,13 @@ import java.util.List;
 
 public interface BookingService {
 
-    List<BookingResponse> findAll();
+    /** Bookings not yet accepted by any driver, available for a driver to accept. */
+    List<BookingResponse> findAllPending();
 
     List<BookingResponse> findAll(Long passengerId);
+
+    /** A driver's own booking history (accepted, ongoing, completed, etc). */
+    List<BookingResponse> findAllForDriver(Long driverId);
 
     BookingResponse findById(Long id, Long passengerId);
 

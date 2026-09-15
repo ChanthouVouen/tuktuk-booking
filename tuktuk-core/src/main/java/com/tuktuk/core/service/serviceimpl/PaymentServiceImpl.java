@@ -8,10 +8,12 @@ import com.tuktuk.core.khqr.KhqrClient;
 import com.tuktuk.core.mapper.PaymentMapper;
 import com.tuktuk.core.service.PaymentService;
 import com.tuktuk.domain.entity.Booking;
+import com.tuktuk.domain.entity.Notification;
 import com.tuktuk.domain.entity.Payment;
 import com.tuktuk.domain.enums.BookingStatus;
 import com.tuktuk.domain.enums.PaymentStatus;
 import com.tuktuk.domain.repository.BookingRepository;
+import com.tuktuk.domain.repository.NotificationRepository;
 import com.tuktuk.domain.repository.PaymentRepository;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -34,6 +36,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final BookingRepository bookingRepository;
+    private final NotificationRepository notificationRepository;
     private final KhqrClient khqrClient;
     private final PaymentProperties paymentProperties;
 
@@ -162,9 +165,22 @@ public class PaymentServiceImpl implements PaymentService {
             payment.setTransactionId(extractTransactionId(result, txInfo));
             payment.setStatus(PaymentStatus.PAID);
             payment.setPaidAt(Instant.now());
+            notifyPaid(payment);
         }
 
         return paymentRepository.save(payment);
+    }
+
+    private void notifyPaid(Payment payment) {
+        Long bookingId = payment.getBooking().getId();
+        notificationRepository.save(Notification.builder()
+                .driver(payment.getDriver())
+                .message("Payment received for booking " + bookingId + ": " + payment.getAmount() + " " + payment.getCurrency())
+                .build());
+        notificationRepository.save(Notification.builder()
+                .passenger(payment.getPassenger())
+                .message("Your payment for booking " + bookingId + " was confirmed")
+                .build());
     }
 
     private boolean isGatewaySuccess(Map<String, Object> result) {

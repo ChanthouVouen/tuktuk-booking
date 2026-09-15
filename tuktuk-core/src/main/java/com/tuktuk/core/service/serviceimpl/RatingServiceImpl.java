@@ -14,6 +14,7 @@ import com.tuktuk.domain.enums.BookingStatus;
 import com.tuktuk.domain.repository.BookingRepository;
 import com.tuktuk.domain.repository.NotificationRepository;
 import com.tuktuk.domain.repository.RatingRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,5 +60,13 @@ public class RatingServiceImpl implements RatingService {
                 .build());
 
         return RatingMapper.toResponse(rating);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<RatingResponse> findForDriver(Long driverId) {
+        return ratingRepository.findByDriverIdOrderByCreatedAtDesc(driverId).stream()
+                .map(RatingMapper::toResponse)
+                .toList();
     }
 }
